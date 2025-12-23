@@ -16,20 +16,22 @@ export default function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 text-white">
-          <h1 className="text-5xl md:text-6xl font-lora font-medium mb-4">
-            Explore<br />
-            Sri Lanka<br />
-            with us.
-          </h1>
-          <p className="text-lg max-w-md opacity-90 mb-6">
-            Journey through Sri Lanka&apos;s ancient cities, lush tea plantations, and
-            pristine beaches. Embrace an unforgettable Sri Lankan adventure today!
-          </p>
-          <div className="flex items-center gap-2 mt-4">
-            <span className="w-2 h-2 bg-white rounded-full"></span>
-            <span className="w-2 h-2 bg-white/50 rounded-full"></span>
-            <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+        <div className="relative max-w-7xl mx-auto px-4 w-full">
+          <div className="text-white md:max-w-lg lg:max-w-xl">
+            <h1 className="text-5xl md:text-6xl font-lora font-medium mb-4 text-left">
+              Explore<br />
+              Sri Lanka<br />
+              with us.
+            </h1>
+            <p className="text-lg opacity-90 mb-6 text-left">
+              Journey through Sri Lanka&apos;s ancient cities, lush tea plantations, and
+              pristine beaches. Embrace an unforgettable Sri Lankan adventure today!
+            </p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="w-2 h-2 bg-white rounded-full"></span>
+              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+            </div>
           </div>
         </div>
         {/* Quote Form Button */}
