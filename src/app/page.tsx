@@ -1,7 +1,63 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
+
+const WHATSAPP_NUMBER = "94788888761";
+const QUOTE_EMAIL = "info@28holidays.com";
+const COUNTRY_CODES = ["+94", "+1", "+44", "+61", "+65", "+971"];
 
 export default function Home() {
+  const quoteFormRef = useRef<HTMLFormElement>(null);
+
+  const submitQuote = (channel: "whatsapp" | "email") => {
+    const form = quoteFormRef.current;
+    if (!form || !form.reportValidity()) {
+      return;
+    }
+
+    const data = new FormData(form);
+    const name = (data.get("name") as string) || "";
+    const vehicleType = (data.get("vehicleType") as string) || "";
+    const adults = (data.get("adults") as string) || "";
+    const children = (data.get("children") as string) || "";
+    const fromDate = (data.get("fromDate") as string) || "";
+    const toDate = (data.get("toDate") as string) || "";
+    const countryCode = (data.get("countryCode") as string) || "+94";
+    const phone = (data.get("phone") as string) || "";
+    const email = (data.get("email") as string) || "";
+    const notes = (data.get("notes") as string) || "";
+
+    const message = [
+      "Vehicle Quote Request (Home Page)",
+      "",
+      `Name: ${name}`,
+      `Vehicle Type: ${vehicleType}`,
+      `Adults: ${adults}`,
+      `Children: ${children}`,
+      `From: ${fromDate}`,
+      `To: ${toDate}`,
+      `Phone: ${countryCode} ${phone}`,
+      `Email: ${email}`,
+      `Additional Notes: ${notes || "-"}`,
+    ].join("\n");
+
+    if (channel === "whatsapp") {
+      window.open(
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+    } else {
+      window.location.href = `mailto:${QUOTE_EMAIL}?subject=${encodeURIComponent(
+        "Vehicle Quote Request - 28Holidays",
+      )}&body=${encodeURIComponent(message)}`;
+    }
+
+    form.reset();
+  };
+
   return (
     <main>
       {/* Hero Section */}
@@ -27,6 +83,9 @@ export default function Home() {
               Journey through Sri Lanka&apos;s ancient cities, lush tea plantations, and
               pristine beaches. Embrace an unforgettable Sri Lankan adventure today!
             </p>
+            <Link href="/car-rental#quote-form" className="btn-primary inline-block mb-2">
+              RENT A VEHICLE
+            </Link>
             <div className="flex items-center gap-2 mt-4">
               <span className="w-2 h-2 bg-white rounded-full"></span>
               <span className="w-2 h-2 bg-white/50 rounded-full"></span>
@@ -40,30 +99,33 @@ export default function Home() {
             <p className="text-sm text-gray-600 mb-2">
               simply fill the form for your vehicle requirement
             </p>
-            <button className="bg-[#0056D8] text-white px-4 py-2 rounded text-sm font-medium w-full hover:bg-[#0044aa]">
+            <Link
+              href="/car-rental#quote-form"
+              className="bg-[#0056D8] text-white px-4 py-2 rounded text-sm font-medium w-full hover:bg-[#0044aa] inline-block text-center"
+            >
               Get a Quote
-            </button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Vehicle Quote Request Section */}
-      <section className="py-16 bg-white">
+      <section id="vehicle-quote" className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-8">
             <p className="section-label">RENT A VEHICLE</p>
             <h2 className="section-title">Vehicle Quote Request</h2>
           </div>
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" placeholder="Name *" required />
-            <select>
+          <form ref={quoteFormRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" name="name" placeholder="Name *" required />
+            <select name="vehicleType" required>
               <option value="">Vehicle Type</option>
               <option value="sedan">Sedan</option>
               <option value="suv">SUV</option>
               <option value="van">Van</option>
               <option value="bus">Bus</option>
             </select>
-            <select>
+            <select name="adults" required>
               <option value="">Select number of adults</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -71,38 +133,49 @@ export default function Home() {
               <option value="4">4</option>
               <option value="5">5+</option>
             </select>
-            <select>
+            <select name="children" required>
               <option value="">Select number of children</option>
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </select>
-            <input type="date" placeholder="From *" />
-            <input type="date" placeholder="To *" />
+            <input type="date" name="fromDate" placeholder="From *" required />
+            <input type="date" name="toDate" placeholder="To *" required />
             <div className="flex items-center gap-2">
-              <span className="text-gray-500 text-sm">+94</span>
-              <input type="tel" placeholder="Phone Number *" className="flex-1" />
-            </div>
-            <input type="email" placeholder="Email Address *" />
-            <div className="md:col-span-2">
-              <textarea placeholder="Additional Notes" rows={4}></textarea>
-            </div>
-            <div className="md:col-span-2 flex flex-wrap gap-4">
-              <button type="submit" className="btn-primary">
-                SUBMIT NOW
-              </button>
-              <a
-                href="https://wa.me/94788888761"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-whatsapp"
+              <select
+                name="countryCode"
+                defaultValue="+94"
+                className="max-w-[110px] flex-shrink-0"
+                aria-label="Country code"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-                WHATSAPP US
-              </a>
+                {COUNTRY_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+              <input type="tel" name="phone" placeholder="Phone Number *" className="flex-1" required />
+            </div>
+            <input type="email" name="email" placeholder="Email Address *" required />
+            <div className="md:col-span-2">
+              <textarea name="notes" placeholder="Additional Notes" rows={4}></textarea>
+            </div>
+            <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                className="btn-whatsapp justify-center sm:min-w-[220px]"
+                onClick={() => submitQuote("whatsapp")}
+              >
+                SEND VIA WHATSAPP
+              </button>
+              <button
+                type="button"
+                className="btn-primary sm:min-w-[220px]"
+                onClick={() => submitQuote("email")}
+              >
+                SEND VIA EMAIL
+              </button>
             </div>
           </form>
         </div>
@@ -331,7 +404,7 @@ export default function Home() {
               height={40}
               className="opacity-70 grayscale hover:grayscale-0 transition-all"
             />
-            <div className="text-gray-400 text-2xl font-bold">nidic</div>
+            <div className="text-gray-400 text-2xl font-bold">Nictic</div>
           </div>
         </div>
       </section>

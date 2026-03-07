@@ -6,36 +6,42 @@ const tours = [
     image: "/img/room/room-1.jpg",
     title: "Cultural Triangle Tour",
     duration: "5 Days",
+    price: "From $620",
     description: "This tour focuses on the cultural highlights of Sri Lanka, including the ancient cities of Anuradhapura and Polonnaruwa, the Dambulla Cave Temples, and the Sigiriya Rock Fortress.",
   },
   {
     image: "/img/room/room-2.jpg",
     title: "Wildlife Safari Tour",
     duration: "5 Days",
+    price: "From $710",
     description: "This tour takes you on safari in Yala National Park and Wilpattu National Park, two of the best places in the world to see elephants, leopards, and other wildlife.",
   },
   {
     image: "/img/room/room-3.jpg",
     title: "Highlights of Sri Lanka",
     duration: "5 Days",
+    price: "From $690",
     description: "This tour takes you to the best of Sri Lanka, including the ancient cities of Anuradhapura and Polonnaruwa, the hilltop fortress of Sigiriya, and the beautiful beaches of Bentota.",
   },
   {
     image: "/img/room/room-4.jpg",
     title: "Beach Vacation",
     duration: "5 Days",
+    price: "From $580",
     description: "Relax and enjoy the sun and sand on Sri Lanka's beautiful beaches. This tour includes time in Bentota, Mirissa, or Tangalle.",
   },
   {
     image: "/img/room/room-5.jpg",
     title: "Active Adventure Tour",
     duration: "5 Days",
+    price: "From $760",
     description: "This tour is for travelers who want to experience the best of Sri Lanka's active adventures. You'll go surfing in Mirissa, hiking in Horton Plains National Park, and white water rafting in Kitulgala.",
   },
   {
     image: "/img/room/room-6.jpg",
     title: "Hill Country Tour",
     duration: "5 Days",
+    price: "From $640",
     description: "This tour takes you to the scenic hill country of Sri Lanka, where you can visit tea plantations, national parks, and temples.",
   },
 ];
@@ -72,12 +78,15 @@ export default function ItinerariesPage() {
                 <h3 className="text-xl font-lora font-semibold mb-2 group-hover:text-[#0056D8] transition-colors">
                   {tour.title}
                 </h3>
-                <p className="text-[#0056D8] font-medium mb-3">{tour.duration}</p>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[#0056D8] font-medium">{tour.duration}</p>
+                  <p className="text-gray-900 font-semibold text-sm">{tour.price}</p>
+                </div>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                   {tour.description}
                 </p>
                 <Link
-                  href="#"
+                  href={`/contact?tour=${encodeURIComponent(tour.title)}`}
                   className="inline-flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-[#0056D8] transition-colors uppercase tracking-wider"
                 >
                   MORE DETAILS

@@ -9,6 +9,23 @@ export default function AboutPage() {
     "Hassle-Free Travel Planning.",
     "Memorable Adventures.",
   ];
+  const teamMembers = [
+    {
+      name: "Nuwan Perera",
+      role: "Founder & Lead Tour Specialist",
+      experience: "12+ years in guided Sri Lanka tours",
+    },
+    {
+      name: "Ishani Fernando",
+      role: "Travel Consultant",
+      experience: "8+ years in itinerary planning",
+    },
+    {
+      name: "Kavindu Silva",
+      role: "Fleet & Logistics Coordinator",
+      experience: "10+ years in transport operations",
+    },
+  ];
 
   return (
     <main>
@@ -48,6 +65,43 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-lora font-semibold text-[#0056D8]">10+</p>
+              <p className="text-gray-600 mt-2 text-sm">Years of Experience</p>
+            </div>
+            <div className="rounded-xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-lora font-semibold text-[#0056D8]">2,000+</p>
+              <p className="text-gray-600 mt-2 text-sm">Happy Travelers</p>
+            </div>
+            <div className="rounded-xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-lora font-semibold text-[#0056D8]">250+</p>
+              <p className="text-gray-600 mt-2 text-sm">Custom Trips Delivered</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <p className="section-label">OUR TEAM</p>
+            <h2 className="section-title">People Behind 28Holidays</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {teamMembers.map((member) => (
+              <div key={member.name} className="rounded-xl border border-gray-100 p-6 bg-white shadow-sm">
+                <h3 className="text-xl font-lora font-semibold">{member.name}</h3>
+                <p className="text-[#0056D8] font-medium text-sm mt-1">{member.role}</p>
+                <p className="text-gray-600 text-sm mt-3">{member.experience}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

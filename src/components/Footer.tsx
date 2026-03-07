@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-800 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div>
             <Image
@@ -83,10 +83,28 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Policies */}
+          <div>
+            <h3 className="text-[#0056D8] font-semibold text-sm tracking-wider uppercase mb-4">
+              POLICIES
+            </h3>
+            <div className="space-y-2 text-sm">
+              <Link href="/terms-and-conditions" className="block text-gray-300 hover:text-white">
+                Terms & Conditions
+              </Link>
+              <Link href="/privacy-policy" className="block text-gray-300 hover:text-white">
+                Privacy Policy
+              </Link>
+              <Link href="/cancellation-policy" className="block text-gray-300 hover:text-white">
+                Cancellation Policy
+              </Link>
+            </div>
+          </div>
+
           {/* Copyright */}
-          <div className="text-right">
+          <div className="lg:text-right">
             <p className="text-gray-400 text-sm">
-              Copyright © 2024 lahiruhet
+              Copyright © 2026 28Holidays
             </p>
           </div>
         </div>

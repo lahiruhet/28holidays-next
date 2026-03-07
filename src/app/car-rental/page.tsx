@@ -1,5 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
+
+const WHATSAPP_NUMBER = "94788888761";
+const QUOTE_EMAIL = "info@28holidays.com";
+const COUNTRY_CODES = ["+94", "+1", "+44", "+61", "+65", "+971"];
 
 const vehicles = [
   {
@@ -33,6 +40,55 @@ const vehicles = [
 ];
 
 export default function CarRentalPage() {
+  const quoteFormRef = useRef<HTMLFormElement>(null);
+
+  const submitQuote = (channel: "whatsapp" | "email") => {
+    const form = quoteFormRef.current;
+    if (!form || !form.reportValidity()) {
+      return;
+    }
+
+    const data = new FormData(form);
+    const name = (data.get("name") as string) || "";
+    const vehicleType = (data.get("vehicleType") as string) || "";
+    const pickupDate = (data.get("pickupDate") as string) || "";
+    const dropoffDate = (data.get("dropoffDate") as string) || "";
+    const pickupLocation = (data.get("pickupLocation") as string) || "";
+    const dropoffLocation = (data.get("dropoffLocation") as string) || "";
+    const countryCode = (data.get("countryCode") as string) || "+94";
+    const phone = (data.get("phone") as string) || "";
+    const email = (data.get("email") as string) || "";
+    const requirements = (data.get("requirements") as string) || "";
+
+    const message = [
+      "Vehicle Quote Request (Car Rental Page)",
+      "",
+      `Name: ${name}`,
+      `Vehicle Type: ${vehicleType}`,
+      `Pick-up Date: ${pickupDate}`,
+      `Drop-off Date: ${dropoffDate}`,
+      `Pick-up Location: ${pickupLocation || "-"}`,
+      `Drop-off Location: ${dropoffLocation || "-"}`,
+      `Phone: ${countryCode} ${phone}`,
+      `Email: ${email}`,
+      `Additional Requirements: ${requirements || "-"}`,
+    ].join("\n");
+
+    if (channel === "whatsapp") {
+      window.open(
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+    } else {
+      window.location.href = `mailto:${QUOTE_EMAIL}?subject=${encodeURIComponent(
+        "Car Rental Quote Request - 28Holidays",
+      )}&body=${encodeURIComponent(message)}`;
+    }
+
+    form.reset();
+  };
+
   return (
     <main>
       {/* Hero Section */}
@@ -87,7 +143,9 @@ export default function CarRentalPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#0056D8] font-semibold">{vehicle.price}</span>
-                    <button className="btn-primary text-sm py-2 px-4">Book Now</button>
+                    <Link href="#quote-form" className="btn-primary text-sm py-2 px-4">
+                      Book Now
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -97,33 +155,58 @@ export default function CarRentalPage() {
       </section>
 
       {/* Quote Form */}
-      <section className="py-16 bg-gray-50">
+      <section id="quote-form" className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-8">
             <p className="section-label">GET A QUOTE</p>
             <h2 className="section-title">Request Vehicle Quote</h2>
           </div>
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" placeholder="Name *" required />
-            <select>
+          <form ref={quoteFormRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" name="name" placeholder="Name *" required />
+            <select name="vehicleType" required>
               <option value="">Vehicle Type</option>
               <option value="sedan">Sedan</option>
               <option value="suv">SUV</option>
               <option value="van">Van</option>
               <option value="bus">Mini Bus</option>
             </select>
-            <input type="date" placeholder="Pick-up Date *" />
-            <input type="date" placeholder="Drop-off Date *" />
-            <input type="text" placeholder="Pick-up Location" />
-            <input type="text" placeholder="Drop-off Location" />
-            <input type="tel" placeholder="Phone Number *" />
-            <input type="email" placeholder="Email Address *" />
-            <div className="md:col-span-2">
-              <textarea placeholder="Additional Requirements" rows={4}></textarea>
+            <input type="date" name="pickupDate" placeholder="Pick-up Date *" required />
+            <input type="date" name="dropoffDate" placeholder="Drop-off Date *" required />
+            <input type="text" name="pickupLocation" placeholder="Pick-up Location" />
+            <input type="text" name="dropoffLocation" placeholder="Drop-off Location" />
+            <div className="flex items-center gap-2">
+              <select
+                name="countryCode"
+                defaultValue="+94"
+                className="max-w-[110px] flex-shrink-0"
+                aria-label="Country code"
+              >
+                {COUNTRY_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+              <input type="tel" name="phone" placeholder="Phone Number *" required className="flex-1" />
             </div>
+            <input type="email" name="email" placeholder="Email Address *" required />
             <div className="md:col-span-2">
-              <button type="submit" className="btn-primary">
-                REQUEST QUOTE
+              <textarea name="requirements" placeholder="Additional Requirements" rows={4}></textarea>
+            </div>
+            <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                className="btn-whatsapp justify-center sm:min-w-[220px]"
+                onClick={() => submitQuote("whatsapp")}
+              >
+                SEND VIA WHATSAPP
+              </button>
+              <button
+                type="button"
+                className="btn-primary sm:min-w-[220px]"
+                onClick={() => submitQuote("email")}
+              >
+                SEND VIA EMAIL
               </button>
             </div>
           </form>
