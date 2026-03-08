@@ -2,14 +2,53 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useCountryCodes } from "@/hooks/useCountryCodes";
 
 const WHATSAPP_NUMBER = "94788888761";
 const QUOTE_EMAIL = "info@28holidays.com";
-const COUNTRY_CODES = ["+94", "+1", "+44", "+61", "+65", "+971"];
+const HERO_SLIDES = [
+  { src: "/img/hero/hero-1.jpg", alt: "Sri Lanka Stilt Fishermen" },
+  { src: "/img/hero/hero-3.jpg", alt: "Tea country views in Sri Lanka" },
+  { src: "/img/hero/hero-4.jpg", alt: "Scenic Sri Lankan coastline" },
+];
+const ITINERARY_PREVIEW = [
+  {
+    src: "/img/itinerary/itinerary-1.webp",
+    name: "Ancient Ruins Tour",
+    description: "Walk through timeless kingdoms and sacred heritage sites across the island.",
+  },
+  {
+    src: "/img/itinerary/itinerary-2.webp",
+    name: "Local Culture Escape",
+    description: "Experience village life, traditional food, and authentic Sri Lankan hospitality.",
+  },
+  {
+    src: "/img/itinerary/itinerary-3.webp",
+    name: "Elephant Safari Trail",
+    description: "Track wildlife in national parks with unforgettable elephant sightings.",
+  },
+  {
+    src: "/img/itinerary/itinerary-4.webp",
+    name: "Beach Paradise Journey",
+    description: "Unwind along tropical shores with sunsets, surf, and oceanfront stays.",
+  },
+];
 
 export default function Home() {
   const quoteFormRef = useRef<HTMLFormElement>(null);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+  const countryCodes = useCountryCodes();
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   const submitQuote = (channel: "whatsapp" | "email") => {
     const form = quoteFormRef.current;
@@ -62,14 +101,23 @@ export default function Home() {
     <main>
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center">
-        <div className="absolute inset-0">
-          <Image
-            src="/img/hero/hero-1.jpg"
-            alt="Sri Lanka Stilt Fishermen"
-            fill
-            className="object-cover"
-            priority
-          />
+        <div className="absolute inset-0 overflow-hidden">
+          {HERO_SLIDES.map((slide, index) => (
+            <div
+              key={slide.src}
+              className={`absolute inset-0 transition-all duration-1000 ease-out ${
+                index === activeHeroIndex ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
+              }`}
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 w-full">
@@ -86,11 +134,23 @@ export default function Home() {
             <Link href="/car-rental#quote-form" className="btn-primary inline-block mb-2">
               RENT A VEHICLE
             </Link>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="w-2 h-2 bg-white rounded-full"></span>
-              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
-              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
-            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <div className="flex items-center gap-2">
+            {HERO_SLIDES.map((slide, index) => (
+              <button
+                key={slide.src}
+                type="button"
+                aria-label={`Show hero slide ${index + 1}`}
+                onClick={() => setActiveHeroIndex(index)}
+                className={`transition-all duration-300 ${
+                  index === activeHeroIndex
+                    ? "w-8 h-2 rounded-full bg-white"
+                    : "w-2 h-2 rounded-full bg-white/60 hover:bg-white/80"
+                }`}
+              />
+            ))}
           </div>
         </div>
         {/* Quote Form Button */}
@@ -146,12 +206,13 @@ export default function Home() {
               <select
                 name="countryCode"
                 defaultValue="+94"
-                className="max-w-[110px] flex-shrink-0"
+                required
+                className="max-w-[220px] flex-shrink-0"
                 aria-label="Country code"
               >
-                {COUNTRY_CODES.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
+                {countryCodes.map((country) => (
+                  <option key={country.key} value={country.value}>
+                    {country.label}
                   </option>
                 ))}
               </select>
@@ -213,28 +274,15 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Image
-                src="/img/about/about-1.jpg"
-                alt="Sri Lanka Temple"
-                width={300}
-                height={250}
-                className="rounded-lg object-cover w-full h-48"
-              />
-              <Image
-                src="/img/about/about-2.jpg"
-                alt="Sri Lanka Wildlife"
-                width={300}
-                height={250}
-                className="rounded-lg object-cover w-full h-48"
-              />
-              <Image
-                src="/img/about/about-4.jpg"
-                alt="Sri Lanka Beach"
-                width={300}
-                height={250}
-                className="rounded-lg object-cover w-full h-48 col-span-2"
-              />
+            <div className="about-collage" aria-label="Sri Lanka adventure collage">
+              <div className="about-collage-item about-collage-item1" />
+              <div className="about-collage-item about-collage-item2" />
+              <div className="about-collage-item about-collage-item3" />
+              <div className="about-collage-item about-collage-item4" />
+              <div className="about-collage-item about-collage-item5" />
+              <div className="about-collage-item about-collage-item6" />
+              <div className="about-collage-item about-collage-item7" />
+              <div className="about-collage-item about-collage-item8" />
             </div>
           </div>
         </div>
@@ -347,42 +395,26 @@ export default function Home() {
             <h2 className="section-title">Itinerary</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="relative h-64 rounded-lg overflow-hidden group">
-              <Image
-                src="/img/itinerary/itinerary-1.webp"
-                alt="Ancient Ruins"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden group">
-              <Image
-                src="/img/itinerary/itinerary-2.webp"
-                alt="Local Culture"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden group">
-              <Image
-                src="/img/itinerary/itinerary-3.webp"
-                alt="Elephant Safari"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden group">
-              <Image
-                src="/img/itinerary/itinerary-4.webp"
-                alt="Beach Paradise"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            </div>
+            {ITINERARY_PREVIEW.map((item) => (
+              <div key={item.src} className="relative aspect-[1/2] rounded-lg overflow-hidden group">
+                <Image
+                  src={item.src}
+                  alt={item.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0056D8]/20 to-transparent transition-all duration-500 group-hover:from-[#0056D8]/55" />
+                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-white transition-transform duration-500 group-hover:-translate-y-2">
+                  <p className="text-xl md:text-2xl font-lora font-semibold leading-tight">{item.name}</p>
+                  <p className="mt-2 text-sm md:text-base opacity-0 max-h-0 overflow-hidden transition-all duration-500 group-hover:opacity-100 group-hover:max-h-20">
+                    {item.description}
+                  </p>
+                  <p className="mt-3 text-xs md:text-sm tracking-[0.18em] uppercase font-semibold">
+                    View Itinerary
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
           <div className="text-center mt-8">
             <Link href="/itineraries" className="btn-primary inline-block">
@@ -393,7 +425,7 @@ export default function Home() {
       </section>
 
       {/* Partners Section */}
-      <section className="py-12 bg-white border-t">
+      <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4">
           <p className="section-label text-center">OUR PARTNER</p>
           <div className="flex items-center justify-center gap-12 mt-6">
@@ -404,7 +436,13 @@ export default function Home() {
               height={40}
               className="opacity-70 grayscale hover:grayscale-0 transition-all"
             />
-            <div className="text-gray-400 text-2xl font-bold">Nictic</div>
+            <Image
+              src="https://www.nictic.com/uploads/2025/03/nictic-logo-1024x325.png"
+              alt="NICTIC"
+              width={180}
+              height={57}
+              className="opacity-70 grayscale hover:grayscale-0 transition-all object-contain"
+            />
           </div>
         </div>
       </section>

@@ -132,3 +132,115 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(0, 86, 216, 0.1);
 }
+
+.about-collage {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  width: 100%;
+  height: 450px;
+  gap: 10px;
+}
+
+.about-collage-item {
+  background-size: cover;
+  background-position: center;
+  border-radius: 0.5rem;
+}
+
+.about-collage-item1 {
+  background-image: url("/img/about/about-4.jpg");
+  grid-column: 1 / 4;
+  grid-row: 1 / 2;
+}
+
+.about-collage-item2 {
+  background-image: url("/img/about/about-11.jpg");
+  grid-column: 1 / 2;
+  grid-row: 2 / 5;
+}
+
+.about-collage-item3 {
+  background-image: url("/img/about/about-2.jpg");
+  grid-column: 1 / 5;
+  grid-row: 5 / 6;
+}
+
+.about-collage-item4 {
+  background-image: url("/img/about/about-13.jpg");
+  grid-column: 2 / 4;
+  grid-row: 2 / 5;
+}
+
+.about-collage-item5 {
+  background-image: url("/img/about/about-1.jpg");
+  grid-column: 4 / 6;
+  grid-row: 1 / 3;
+}
+
+.about-collage-item6 {
+  background-image: url("/img/about/about-10.jpg");
+  grid-column: 4 / 5;
+  grid-row: 3 / 5;
+}
+
+.about-collage-item7 {
+  background-image: url("/img/about/about-14.jpg");
+  grid-column: 5 / 6;
+  grid-row: 3 / 6;
+}
+
+.about-collage-item8 {
+  background-image: url("/img/about/about-12.jpg");
+  grid-column: 6 / 8;
+  grid-row: 1 / 6;
+}
+
+@media (max-width: 1023px) {
+  .about-collage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, 110px);
+    height: auto;
+  }
+
+  .about-collage-item1 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  .about-collage-item2 {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+
+  .about-collage-item3 {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+
+  .about-collage-item4 {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+
+  .about-collage-item5 {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+  }
+
+  .about-collage-item6 {
+    grid-column: 1 / 2;
+    grid-row: 4 / 5;
+  }
+
+  .about-collage-item7 {
+    grid-column: 2 / 3;
+    grid-row: 4 / 5;
+  }
+
+  .about-collage-item8 {
+    grid-column: 1 / 3;
+    grid-row: 5 / 6;
+    min-height: 140px;
+  }
+}

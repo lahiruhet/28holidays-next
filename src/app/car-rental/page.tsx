@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
+import { useCountryCodes } from "@/hooks/useCountryCodes";
 
 const WHATSAPP_NUMBER = "94788888761";
 const QUOTE_EMAIL = "info@28holidays.com";
-const COUNTRY_CODES = ["+94", "+1", "+44", "+61", "+65", "+971"];
 
 const vehicles = [
   {
@@ -41,6 +41,7 @@ const vehicles = [
 
 export default function CarRentalPage() {
   const quoteFormRef = useRef<HTMLFormElement>(null);
+  const countryCodes = useCountryCodes();
 
   const submitQuote = (channel: "whatsapp" | "email") => {
     const form = quoteFormRef.current;
@@ -178,12 +179,13 @@ export default function CarRentalPage() {
               <select
                 name="countryCode"
                 defaultValue="+94"
-                className="max-w-[110px] flex-shrink-0"
+                required
+                className="max-w-[220px] flex-shrink-0"
                 aria-label="Country code"
               >
-                {COUNTRY_CODES.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
+                {countryCodes.map((country) => (
+                  <option key={country.key} value={country.value}>
+                    {country.label}
                   </option>
                 ))}
               </select>

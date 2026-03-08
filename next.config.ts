@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.tripadvisor.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.nictic.com',
+      },
     ],
   },
 };
