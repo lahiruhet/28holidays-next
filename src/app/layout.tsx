@@ -20,6 +20,11 @@ const cabin = Cabin({
 export const metadata: Metadata = {
   title: "28Holidays - Explore Sri Lanka with us",
   description: "Your Local Expert in Sri Lankan Adventure. Licensed and experienced tour guide company in Sri Lanka.",
+  icons: {
+    icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: [{ url: "/favicon.png", type: "image/png" }],
+    shortcut: ["/favicon.png"],
+  },
 };
 
 export default function RootLayout({

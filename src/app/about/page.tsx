@@ -26,6 +26,33 @@ export default function AboutPage() {
       experience: "10+ years in transport operations",
     },
   ];
+  const experienceGallery = [
+    {
+      src: "/img/gallery/gallery-1.jpg",
+      alt: "Misty hill country lake view",
+      className: "lg:col-span-6 lg:row-start-1 lg:col-start-1 aspect-[16/10]",
+      sizes: "(min-width: 1024px) 42vw, 100vw",
+      priority: true,
+    },
+    {
+      src: "/img/gallery/gallery-3.jpg",
+      alt: "Ancient Sri Lankan cultural artwork",
+      className: "lg:col-span-3 lg:row-start-2 lg:col-start-1 aspect-square",
+      sizes: "(min-width: 1024px) 18vw, 50vw",
+    },
+    {
+      src: "/img/gallery/gallery-4.jpg",
+      alt: "White water rafting adventure",
+      className: "lg:col-span-3 lg:row-start-2 lg:col-start-4 aspect-square",
+      sizes: "(min-width: 1024px) 24vw, 50vw",
+    },
+    {
+      src: "/img/gallery/gallery-2.jpg",
+      alt: "Traditional Sri Lankan fire performance",
+      className: "lg:col-span-6 lg:row-span-2 lg:col-start-7 lg:row-start-1 aspect-[4/5] lg:aspect-auto",
+      sizes: "(min-width: 1024px) 32vw, 100vw",
+    },
+  ];
 
   return (
     <main>
@@ -185,75 +212,28 @@ export default function AboutPage() {
       </section>
 
       {/* Our Experiences Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
+      <section className="bg-white py-16 lg:py-20">
+        <div className="mx-auto max-w-[1180px] px-4 sm:px-6">
+          <div className="mb-10 text-center lg:mb-12">
             <p className="section-label">OUR ADVENTURES</p>
             <h2 className="section-title">Discover Our Experiences</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Large Image */}
-            <div className="relative h-80 rounded-xl overflow-hidden group col-span-1 row-span-2">
-              <Image
-                src="/img/about/about-5.jpg"
-                alt="Beach Experience"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-
-            {/* Fire Dance */}
-            <div className="relative h-36 rounded-xl overflow-hidden group col-span-2">
-              <Image
-                src="/img/about/about-10.jpg"
-                alt="Fire Dance"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-
-            {/* Small Images */}
-            <div className="relative h-36 rounded-xl overflow-hidden group">
-              <Image
-                src="/img/about/about-11.jpg"
-                alt="Safari"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-
-            <div className="relative h-36 rounded-xl overflow-hidden group">
-              <Image
-                src="/img/about/about-12.jpg"
-                alt="Adventure"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-
-            <div className="relative h-36 rounded-xl overflow-hidden group">
-              <Image
-                src="/img/about/about-13.jpg"
-                alt="Culture"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
-
-            <div className="relative h-36 rounded-xl overflow-hidden group">
-              <Image
-                src="/img/about/about-14.jpg"
-                alt="Nature"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12 lg:grid-rows-[310px_274px] lg:gap-5">
+            {experienceGallery.map((image) => (
+              <div
+                key={image.src}
+                className={`relative overflow-hidden rounded-md ${image.className}`}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes={image.sizes}
+                  priority={image.priority}
+                  className="object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
