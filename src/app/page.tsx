@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import CountryCodePicker from "@/components/CountryCodePicker";
 import { useCountryCodes } from "@/hooks/useCountryCodes";
 
 const WHATSAPP_NUMBER = "94788888761";
@@ -177,15 +178,15 @@ export default function Home() {
             <h2 className="section-title">Vehicle Quote Request</h2>
           </div>
           <form ref={quoteFormRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" name="name" placeholder="Name *" required />
-            <select name="vehicleType" required>
+            <input type="text" name="name" placeholder="Name *" className="form-control" required />
+            <select name="vehicleType" defaultValue="" className="form-control" required>
               <option value="">Vehicle Type</option>
               <option value="sedan">Sedan</option>
               <option value="suv">SUV</option>
               <option value="van">Van</option>
               <option value="bus">Bus</option>
             </select>
-            <select name="adults" required>
+            <select name="adults" defaultValue="" className="form-control" required>
               <option value="">Select number of adults</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -193,34 +194,34 @@ export default function Home() {
               <option value="4">4</option>
               <option value="5">5+</option>
             </select>
-            <select name="children" required>
+            <select name="children" defaultValue="" className="form-control" required>
               <option value="">Select number of children</option>
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </select>
-            <input type="date" name="fromDate" placeholder="From *" required />
-            <input type="date" name="toDate" placeholder="To *" required />
-            <div className="flex items-center gap-2">
-              <select
-                name="countryCode"
-                defaultValue="+94"
+            <label className="form-field">
+              <span className="form-label">Travel start date *</span>
+              <input id="fromDate" type="date" name="fromDate" className="form-control" required />
+            </label>
+            <label className="form-field">
+              <span className="form-label">Travel end date *</span>
+              <input id="toDate" type="date" name="toDate" className="form-control" required />
+            </label>
+            <div className="form-phone-grid">
+              <CountryCodePicker name="countryCode" options={countryCodes} defaultValue="+94" ariaLabel="Country code" />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number *"
+                className="form-control min-w-0"
                 required
-                className="max-w-[220px] flex-shrink-0"
-                aria-label="Country code"
-              >
-                {countryCodes.map((country) => (
-                  <option key={country.key} value={country.value}>
-                    {country.label}
-                  </option>
-                ))}
-              </select>
-              <input type="tel" name="phone" placeholder="Phone Number *" className="flex-1" required />
+              />
             </div>
-            <input type="email" name="email" placeholder="Email Address *" required />
+            <input type="email" name="email" placeholder="Email Address *" className="form-control" required />
             <div className="md:col-span-2">
-              <textarea name="notes" placeholder="Additional Notes" rows={4}></textarea>
+              <textarea name="notes" placeholder="Additional Notes" className="form-control" rows={4}></textarea>
             </div>
             <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
               <button

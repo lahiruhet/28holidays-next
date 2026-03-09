@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
+import CountryCodePicker from "@/components/CountryCodePicker";
 import { useCountryCodes } from "@/hooks/useCountryCodes";
 
 const WHATSAPP_NUMBER = "94788888761";
@@ -163,37 +164,36 @@ export default function CarRentalPage() {
             <h2 className="section-title">Request Vehicle Quote</h2>
           </div>
           <form ref={quoteFormRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" name="name" placeholder="Name *" required />
-            <select name="vehicleType" required>
+            <input type="text" name="name" placeholder="Name *" className="form-control" required />
+            <select name="vehicleType" defaultValue="" className="form-control" required>
               <option value="">Vehicle Type</option>
               <option value="sedan">Sedan</option>
               <option value="suv">SUV</option>
               <option value="van">Van</option>
               <option value="bus">Mini Bus</option>
             </select>
-            <input type="date" name="pickupDate" placeholder="Pick-up Date *" required />
-            <input type="date" name="dropoffDate" placeholder="Drop-off Date *" required />
-            <input type="text" name="pickupLocation" placeholder="Pick-up Location" />
-            <input type="text" name="dropoffLocation" placeholder="Drop-off Location" />
-            <div className="flex items-center gap-2">
-              <select
-                name="countryCode"
-                defaultValue="+94"
-                required
-                className="max-w-[220px] flex-shrink-0"
-                aria-label="Country code"
-              >
-                {countryCodes.map((country) => (
-                  <option key={country.key} value={country.value}>
-                    {country.label}
-                  </option>
-                ))}
-              </select>
-              <input type="tel" name="phone" placeholder="Phone Number *" required className="flex-1" />
+            <label className="form-field">
+              <span className="form-label">Pick-up date *</span>
+              <input type="date" name="pickupDate" className="form-control" required />
+            </label>
+            <label className="form-field">
+              <span className="form-label">Drop-off date *</span>
+              <input type="date" name="dropoffDate" className="form-control" required />
+            </label>
+            <input type="text" name="pickupLocation" placeholder="Pick-up Location" className="form-control" />
+            <input type="text" name="dropoffLocation" placeholder="Drop-off Location" className="form-control" />
+            <div className="form-phone-grid">
+              <CountryCodePicker name="countryCode" options={countryCodes} defaultValue="+94" ariaLabel="Country code" />
+              <input type="tel" name="phone" placeholder="Phone Number *" required className="form-control min-w-0" />
             </div>
-            <input type="email" name="email" placeholder="Email Address *" required />
+            <input type="email" name="email" placeholder="Email Address *" className="form-control" required />
             <div className="md:col-span-2">
-              <textarea name="requirements" placeholder="Additional Requirements" rows={4}></textarea>
+              <textarea
+                name="requirements"
+                placeholder="Additional Requirements"
+                className="form-control"
+                rows={4}
+              ></textarea>
             </div>
             <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
               <button

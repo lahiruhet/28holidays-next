@@ -1,89 +1,59 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import type { Country } from "react-phone-number-input";
+import { getCountries, getCountryCallingCode } from "react-phone-number-input";
+import labels from "react-phone-number-input/locale/en.json";
 
-type CountryOption = {
+export type CountryOption = {
   key: string;
-  label: string;
+  country: Country;
+  name: string;
   value: string;
+  callingCode: string;
 };
 
-const FALLBACK_CODES: CountryOption[] = [
-  { key: "LK-94", label: "Sri Lanka (+94)", value: "+94" },
-  { key: "US-1", label: "United States (+1)", value: "+1" },
-  { key: "GB-44", label: "United Kingdom (+44)", value: "+44" },
-  { key: "IN-91", label: "India (+91)", value: "+91" },
-  { key: "AU-61", label: "Australia (+61)", value: "+61" },
-  { key: "AE-971", label: "United Arab Emirates (+971)", value: "+971" },
-  { key: "CA-1", label: "Canada (+1)", value: "+1" },
-  { key: "SG-65", label: "Singapore (+65)", value: "+65" },
-];
+const countryLabels = labels as Record<string, string>;
 
-type RestCountry = {
-  cca2?: string;
-  idd?: {
-    root?: string;
-    suffixes?: string[];
-  };
-  name?: {
-    common?: string;
-  };
+const PREFERRED_COUNTRIES_BY_CALLING_CODE: Partial<Record<string, Country>> = {
+  "1": "US",
+  "7": "RU",
+  "39": "IT",
+  "44": "GB",
+  "47": "NO",
+  "61": "AU",
 };
+
+const COUNTRY_OPTIONS: CountryOption[] = buildCountryOptions();
+
+function buildCountryOptions() {
+  const groupedByCallingCode = new Map<string, CountryOption[]>();
+
+  getCountries().forEach((country) => {
+    const callingCode = getCountryCallingCode(country);
+    const option: CountryOption = {
+      key: `${country}-${callingCode}`,
+      country,
+      name: countryLabels[country] ?? country,
+      value: `+${callingCode}`,
+      callingCode,
+    };
+
+    const existingOptions = groupedByCallingCode.get(callingCode) ?? [];
+    existingOptions.push(option);
+    groupedByCallingCode.set(callingCode, existingOptions);
+  });
+
+  return Array.from(groupedByCallingCode.values())
+    .map((options) => {
+      const preferredCountry = PREFERRED_COUNTRIES_BY_CALLING_CODE[options[0].callingCode];
+
+      return (
+        options.find((option) => option.country === preferredCountry) ??
+        options.slice().sort((a, b) => a.name.localeCompare(b.name))[0]
+      );
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
 
 export function useCountryCodes() {
-  const [countryCodes, setCountryCodes] = useState<CountryOption[]>(FALLBACK_CODES);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadCountryCodes = async () => {
-      try {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,idd,cca2");
-        if (!response.ok) {
-          return;
-        }
-
-        const countries = (await response.json()) as RestCountry[];
-        const nextOptions: CountryOption[] = [];
-
-        countries.forEach((country) => {
-          const root = country.idd?.root;
-          const suffixes = country.idd?.suffixes ?? [];
-          const name = country.name?.common;
-          const cca2 = country.cca2;
-
-          if (!root || !suffixes.length || !name || !cca2) {
-            return;
-          }
-
-          suffixes.forEach((suffix) => {
-            const value = `${root}${suffix}`;
-            nextOptions.push({
-              key: `${cca2}-${value}`,
-              label: `${name} (${value})`,
-              value,
-            });
-          });
-        });
-
-        if (!nextOptions.length) {
-          return;
-        }
-
-        nextOptions.sort((a, b) => a.label.localeCompare(b.label));
-
-        if (isMounted) {
-          setCountryCodes(nextOptions);
-        }
-      } catch {
-        // Keep fallback list if request fails.
-      }
-    };
-
-    void loadCountryCodes();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return countryCodes;
+  return useMemo(() => COUNTRY_OPTIONS, []);
 }
