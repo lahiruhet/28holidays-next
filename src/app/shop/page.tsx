@@ -42,58 +42,72 @@ const products = [
 
 export default function ShopPage() {
   return (
-    <main>
-      {/* Hero Section */}
-      <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-lora text-center mb-4">Shop</h1>
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-[#0056D8]">Home</Link>
-            <span>&gt;</span>
-            <span>Shop</span>
+    <main className="relative">
+      <div inert aria-hidden="true">
+        {/* Hero Section */}
+        <section className="bg-white py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <h1 className="text-4xl font-lora text-center mb-4">Shop</h1>
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+              <Link href="/" className="hover:text-[#0056D8]">
+                Home
+              </Link>
+              <span>&gt;</span>
+              <span>Shop</span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Products Grid */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <p className="section-label">AUTHENTIC SRI LANKAN</p>
-            <h2 className="section-title">Souvenirs & Products</h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Take a piece of Sri Lanka home with you. Browse our collection of authentic local products, handcrafted souvenirs, and traditional items.
-            </p>
-          </div>
+        {/* Products Grid */}
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <p className="section-label">AUTHENTIC SRI LANKAN</p>
+              <h2 className="section-title">Souvenirs & Products</h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Take a piece of Sri Lanka home with you. Browse our collection of authentic local
+                products, handcrafted souvenirs, and traditional items.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                <div className="relative h-64">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <span className="absolute top-4 left-4 bg-[#0056D8] text-white text-xs px-3 py-1 rounded-full">
-                    {product.category}
-                  </span>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-lora font-semibold mb-2">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#0056D8] text-xl font-semibold">{product.price}</span>
-                    <button className="bg-gray-100 hover:bg-[#0056D8] hover:text-white text-gray-700 px-4 py-2 rounded-lg transition-colors font-medium text-sm">
-                      Add to Cart
-                    </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map((product, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                  <div className="relative h-64">
+                    <Image src={product.image} alt={product.name} fill className="object-cover" />
+                    <span className="absolute top-4 left-4 bg-[#0056D8] text-white text-xs px-3 py-1 rounded-full">
+                      {product.category}
+                    </span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-lora font-semibold mb-2">{product.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#0056D8] text-xl font-semibold">{product.price}</span>
+                      <button
+                        disabled
+                        className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium text-sm cursor-not-allowed"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+        </section>
+      </div>
+
+      <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+        <div className="mx-4 max-w-md rounded-2xl border border-white/70 bg-white/90 px-8 py-10 text-center shadow-xl">
+          <p className="section-label">STORE UPDATE</p>
+          <h2 className="text-3xl font-lora font-semibold text-slate-900 mb-3">Coming Soon</h2>
+          <p className="text-gray-600">
+            Our store is currently under construction. Check back soon to shop authentic Sri Lankan
+            products.
+          </p>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

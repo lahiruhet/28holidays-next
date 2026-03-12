@@ -9,10 +9,51 @@ import { useCountryCodes } from "@/hooks/useCountryCodes";
 const WHATSAPP_NUMBER = "94788888761";
 const QUOTE_EMAIL = "info@28holidays.com";
 const HERO_SLIDES = [
-  { src: "/img/hero/hero-1.jpg", alt: "Sri Lanka Stilt Fishermen" },
-  { src: "/img/hero/hero-3.jpg", alt: "Tea country views in Sri Lanka" },
-  { src: "/img/hero/hero-4.jpg", alt: "Scenic Sri Lankan coastline" },
+  {
+    src: "/img/hero/hero-1.jpg",
+    alt: "Sri Lanka Stilt Fishermen",
+    headline: ["Explore", "Sri Lanka", "with us."],
+    body:
+      "Journey through Sri Lanka's ancient cities, lush tea plantations, and pristine beaches with a local team that knows the island best.",
+    ctaLabel: "RENT A VEHICLE",
+    ctaHref: "/car-rental#quote-form",
+  },
+  {
+    src: "/img/hero/hero-3.jpg",
+    alt: "Tea country views in Sri Lanka",
+    headline: ["Build", "Your Ideal", "Island Route."],
+    body:
+      "Plan a tailor-made itinerary that blends cultural highlights, scenic train rides, safaris, and quiet moments in the hill country.",
+    ctaLabel: "VIEW ITINERARIES",
+    ctaHref: "/itineraries",
+  },
+  {
+    src: "/img/hero/hero-4.jpg",
+    alt: "Scenic Sri Lankan coastline",
+    headline: ["Travel", "Comfortably", "Islandwide."],
+    body:
+      "From airport pickups to full multi-day tours, our vehicle and driver service keeps every leg of your Sri Lanka trip smooth and reliable.",
+    ctaLabel: "CONTACT OUR TEAM",
+    ctaHref: "/contact",
+  },
 ];
+type TripadvisorReview = {
+  author: string;
+  rating: number;
+  text: string;
+  date: string;
+};
+
+const FALLBACK_TESTIMONIALS: TripadvisorReview[] = [
+  {
+    author: "Nicholas",
+    rating: 5,
+    text:
+      "28holidays allowed me to live a memorable experience in Sri Lanka. Well organized itinerary, guides always on point and truly satisfying overnight stays. Among other things, we explored ancient ruins, tea plantations and lots of beaches. Transportation was always on time and comfortable. Recommended!",
+    date: "",
+  },
+];
+
 const ITINERARY_PREVIEW = [
   {
     src: "/img/itinerary/itinerary-1.webp",
@@ -36,10 +77,31 @@ const ITINERARY_PREVIEW = [
   },
 ];
 
+function formatReviewDate(date: string) {
+  if (!date) {
+    return "TripAdvisor review";
+  }
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsedDate);
+}
+
 export default function Home() {
   const quoteFormRef = useRef<HTMLFormElement>(null);
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+  const [tripadvisorReviews, setTripadvisorReviews] = useState<TripadvisorReview[]>([]);
   const countryCodes = useCountryCodes();
+  const activeHeroSlide = HERO_SLIDES[activeHeroIndex];
+  const testimonialReviews = tripadvisorReviews.length > 0 ? tripadvisorReviews : FALLBACK_TESTIMONIALS;
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -48,6 +110,34 @@ export default function Home() {
 
     return () => {
       window.clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadTripadvisorReviews = async () => {
+      try {
+        const response = await fetch("/api/tripadvisor-reviews");
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as TripadvisorReview[];
+
+        if (!isCancelled && Array.isArray(data) && data.length > 0) {
+          setTripadvisorReviews(data.slice(0, 3));
+        }
+      } catch (error) {
+        console.error("Unable to load TripAdvisor reviews", error);
+      }
+    };
+
+    void loadTripadvisorReviews();
+
+    return () => {
+      isCancelled = true;
     };
   }, []);
 
@@ -124,16 +214,15 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 w-full">
           <div className="text-white md:max-w-lg lg:max-w-xl">
             <h1 className="text-5xl md:text-6xl font-lora font-medium mb-4 text-left">
-              Explore<br />
-              Sri Lanka<br />
-              with us.
+              {activeHeroSlide.headline.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h1>
-            <p className="text-lg opacity-90 mb-6 text-left">
-              Journey through Sri Lanka&apos;s ancient cities, lush tea plantations, and
-              pristine beaches. Embrace an unforgettable Sri Lankan adventure today!
-            </p>
-            <Link href="/car-rental#quote-form" className="btn-primary inline-block mb-2">
-              RENT A VEHICLE
+            <p className="text-lg opacity-90 mb-6 text-left">{activeHeroSlide.body}</p>
+            <Link href={activeHeroSlide.ctaHref} className="btn-primary inline-block mb-2">
+              {activeHeroSlide.ctaLabel}
             </Link>
           </div>
         </div>
@@ -359,24 +448,46 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="section-label">TESTIMONIALS</p>
-          <h2 className="section-title mb-8">What Customers Say?</h2>
-          <blockquote className="text-gray-600 text-lg italic mb-6">
-            &quot;28holidays allowed me to live a memorable experience in Sri Lanka. Well organized
-            itinerary, guides always on point and truly satisfying overnight stays. Among other things,
-            we explored ancient ruins, tea plantations and lots of beaches. Transportation was always
-            on time and comfortable. Recommended!&quot;
-          </blockquote>
-          <div className="flex items-center justify-center gap-1 text-yellow-400 mb-2">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <p className="section-label">TESTIMONIALS</p>
+            <h2 className="section-title">What Customers Say?</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {testimonialReviews.map((review) => (
+              <article
+                key={`${review.author}-${review.date || review.text.slice(0, 24)}`}
+                className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100"
+              >
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-1 text-yellow-400">
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <svg
+                        key={index}
+                        className={`w-5 h-5 ${
+                          index < Math.max(1, Math.min(5, Math.round(review.rating)))
+                            ? "text-yellow-400"
+                            : "text-gray-200"
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-xs font-semibold tracking-[0.18em] text-gray-400 uppercase">
+                    {formatReviewDate(review.date)}
+                  </p>
+                </div>
+                <blockquote className="text-gray-600 italic leading-7 mb-6">
+                  &quot;{review.text}&quot;
+                </blockquote>
+                <p className="font-medium text-slate-900">- {review.author}</p>
+              </article>
             ))}
           </div>
-          <p className="font-medium">- Nicholas</p>
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-6 flex items-center justify-center">
             <Image
               src="/img/testimonial-logo.png"
               alt="TripAdvisor"
@@ -437,13 +548,15 @@ export default function Home() {
               height={40}
               className="opacity-70 grayscale hover:grayscale-0 transition-all"
             />
-            <Image
-              src="https://www.nictic.com/uploads/2025/03/nictic-logo-1024x325.png"
-              alt="NICTIC"
-              width={180}
-              height={57}
-              className="opacity-70 grayscale hover:grayscale-0 transition-all object-contain"
-            />
+            <a href="https://www.nictic.com" target="_blank" rel="noopener noreferrer">
+              <Image
+                src="https://www.nictic.com/uploads/2025/03/nictic-logo-1024x325.png"
+                alt="NICTIC"
+                width={180}
+                height={57}
+                className="opacity-70 grayscale hover:grayscale-0 transition-all object-contain"
+              />
+            </a>
           </div>
         </div>
       </section>
