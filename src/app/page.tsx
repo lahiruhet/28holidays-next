@@ -7,7 +7,6 @@ import CountryCodePicker from "@/components/CountryCodePicker";
 import { useCountryCodes } from "@/hooks/useCountryCodes";
 
 const WHATSAPP_NUMBER = "94788888761";
-const QUOTE_EMAIL = "info@28holidays.com";
 const HERO_SLIDES = [
   {
     src: "/img/hero/Private Transport.jpg",
@@ -96,12 +95,11 @@ export default function Home() {
   const quoteFormRef = useRef<HTMLFormElement>(null);
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [tripadvisorReviews, setTripadvisorReviews] = useState<TripadvisorReview[]>([]);
+  const [quoteStatus, setQuoteStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [quoteMessage, setQuoteMessage] = useState("");
   const countryCodes = useCountryCodes();
   const activeHeroSlide = HERO_SLIDES[activeHeroIndex];
-<<<<<<< HEAD
   const testimonialReviews = tripadvisorReviews.length > 0 ? tripadvisorReviews : FALLBACK_TESTIMONIALS;
-=======
->>>>>>> 0c63875 (changed hero text and images)
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -141,11 +139,14 @@ export default function Home() {
     };
   }, []);
 
-  const submitQuote = (channel: "whatsapp" | "email") => {
+  const submitQuote = async (channel: "whatsapp" | "email") => {
     const form = quoteFormRef.current;
     if (!form || !form.reportValidity()) {
       return;
     }
+
+    setQuoteStatus("submitting");
+    setQuoteMessage("");
 
     const data = new FormData(form);
     const name = (data.get("name") as string) || "";
@@ -158,34 +159,53 @@ export default function Home() {
     const phone = (data.get("phone") as string) || "";
     const email = (data.get("email") as string) || "";
     const notes = (data.get("notes") as string) || "";
+    const company = (data.get("company") as string) || "";
 
-    const message = [
-      "Vehicle Quote Request (Home Page)",
-      "",
-      `Name: ${name}`,
-      `Vehicle Type: ${vehicleType}`,
-      `Adults: ${adults}`,
-      `Children: ${children}`,
-      `From: ${fromDate}`,
-      `To: ${toDate}`,
-      `Phone: ${countryCode} ${phone}`,
-      `Email: ${email}`,
-      `Additional Notes: ${notes || "-"}`,
-    ].join("\n");
+    try {
+      const response = await fetch("/api/quote", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          page: "home",
+          name,
+          vehicleType,
+          adults,
+          children,
+          travelStartDate: fromDate,
+          travelEndDate: toDate,
+          phone: `${countryCode} ${phone}`.trim(),
+          email,
+          notes,
+          company,
+        }),
+      });
 
-    if (channel === "whatsapp") {
-      window.open(
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
-        "_blank",
-        "noopener,noreferrer",
+      const result = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(result.error || "We could not send your quote request.");
+      }
+
+      setQuoteStatus("success");
+      setQuoteMessage("Your quote request has been sent.");
+      form.reset();
+
+      if (channel === "whatsapp") {
+        const whatsappText = `New quote request submitted by ${name}. Please continue on WhatsApp.`;
+        window.open(
+          `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`,
+          "_blank",
+          "noopener,noreferrer",
+        );
+      }
+    } catch (error) {
+      setQuoteStatus("error");
+      setQuoteMessage(
+        error instanceof Error ? error.message : "We could not send your quote request.",
       );
-    } else {
-      window.location.href = `mailto:${QUOTE_EMAIL}?subject=${encodeURIComponent(
-        "Vehicle Quote Request - 28Holidays",
-      )}&body=${encodeURIComponent(message)}`;
     }
-
-    form.reset();
   };
 
   return (
@@ -212,18 +232,6 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 w-full">
           <div className="text-white md:max-w-lg lg:max-w-xl">
-<<<<<<< HEAD
-            <h1 className="text-5xl md:text-6xl font-lora font-medium mb-4 text-left">
-              {activeHeroSlide.headline.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </h1>
-            <p className="text-lg opacity-90 mb-6 text-left">{activeHeroSlide.body}</p>
-            <Link href={activeHeroSlide.ctaHref} className="btn-primary inline-block mb-2">
-              {activeHeroSlide.ctaLabel}
-=======
             <p className="text-sm md:text-base tracking-[0.15em] uppercase opacity-90 mb-3 text-left">
         {activeHeroSlide.title}
       </p>
@@ -235,7 +243,6 @@ export default function Home() {
       </p>
       <Link href="/car-rental#quote-form" className="btn-primary inline-block mb-2">
         RENT A VEHICLE
->>>>>>> 0c63875 (changed hero text and images)
       </Link>
     </div>
         </div >
@@ -324,20 +331,44 @@ export default function Home() {
           <div className="md:col-span-2">
             <textarea name="notes" placeholder="Additional Notes" className="form-control" rows={4}></textarea>
           </div>
+          <input
+            type="text"
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+            className="sr-only"
+            aria-hidden="true"
+          />
+          {quoteStatus !== "idle" ? (
+            <p
+              className={`md:col-span-2 rounded-md px-4 py-3 text-sm ${
+                quoteStatus === "success"
+                  ? "bg-green-50 text-green-700"
+                  : quoteStatus === "error"
+                    ? "bg-red-50 text-red-700"
+                    : "bg-slate-100 text-slate-600"
+              }`}
+              role="status"
+            >
+              {quoteStatus === "submitting" ? "Sending your quote request..." : quoteMessage}
+            </p>
+          ) : null}
           <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               className="btn-whatsapp justify-center sm:min-w-[220px]"
-              onClick={() => submitQuote("whatsapp")}
+              onClick={() => void submitQuote("whatsapp")}
+              disabled={quoteStatus === "submitting"}
             >
-              SEND VIA WHATSAPP
+              {quoteStatus === "submitting" ? "SENDING..." : "SEND VIA WHATSAPP"}
             </button>
             <button
               type="button"
               className="btn-primary sm:min-w-[220px]"
-              onClick={() => submitQuote("email")}
+              onClick={() => void submitQuote("email")}
+              disabled={quoteStatus === "submitting"}
             >
-              SEND VIA EMAIL
+              {quoteStatus === "submitting" ? "SENDING..." : "SEND VIA EMAIL"}
             </button>
           </div>
         </form>

@@ -11,9 +11,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Contact Form Email Setup
+## Form Email Setup
 
-The contact form posts to `POST /api/contact` and sends mail through SMTP, which works on Vercel as long as these environment variables are set:
+The contact form (`POST /api/contact`) and quote request forms (`POST /api/quote`) send mail through SMTP, which works on Vercel as long as these environment variables are set:
 
 ```bash
 SMTP_HOST=
