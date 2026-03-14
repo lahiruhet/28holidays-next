@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.nictic.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.bluelankatours.com',
+      },
     ],
   },
 };
