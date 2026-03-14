@@ -1,6 +1,16 @@
 import Link from "next/link";
+import ContactForm from "@/components/ContactForm";
 
-export default function ContactPage() {
+type ContactPageProps = {
+  searchParams?: Promise<{
+    tour?: string;
+  }>;
+};
+
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const params = await searchParams;
+  const initialSubject = params?.tour ? `Inquiry about ${params.tour}` : "";
+
   return (
     <main>
       {/* Hero Section */}
@@ -22,17 +32,7 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div>
               <h2 className="text-2xl font-lora font-semibold mb-6">Get In Touch</h2>
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Your Name *" required />
-                  <input type="email" placeholder="Your Email *" required />
-                </div>
-                <input type="text" placeholder="Subject" />
-                <textarea placeholder="Your Message *" rows={6} required></textarea>
-                <button type="submit" className="btn-primary">
-                  SEND MESSAGE
-                </button>
-              </form>
+              <ContactForm initialSubject={initialSubject} />
             </div>
 
             {/* Contact Info */}
