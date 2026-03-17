@@ -40,13 +40,29 @@ type TripadvisorReview = {
   date: string;
 };
 
-const FALLBACK_TESTIMONIALS: TripadvisorReview[] = [
+const CUSTOMER_VIDEO_TESTIMONIAL = {
+  href: "https://www.tripadvisor.co.uk/Attraction_Review-g293962-d27497643-Reviews-28holidays_com-Colombo_Western_Province.html",
+  thumbnailSrc:
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2e/de/ba/a0/caption.jpg?w=1100&h=-1&s=1",
+  title: "Customer Video Testimonial",
+  description:
+    "Watch a guest share their Sri Lanka travel experience with 28holidays.",
+};
+
+const TESTIMONIAL_REVIEWS: TripadvisorReview[] = [
   {
-    author: "Nicholas",
+    author: "Radzio M",
     rating: 5,
     text:
-      "28holidays allowed me to live a memorable experience in Sri Lanka. Well organized itinerary, guides always on point and truly satisfying overnight stays. Among other things, we explored ancient ruins, tea plantations and lots of beaches. Transportation was always on time and comfortable. Recommended!",
-    date: "",
+      "We had a 9 days round trip in Srilanka with 28hollidays. They very Profesjonał, helpful and easy to contact. The driver Faheem is very responsible, clean, and kind. He was knowledgeable, helpful, and familiar with the language and customs. We felt very safe and well-cared for throughout the trip. The car was clean and well-maintained. We definitely recommend him.",
+    date: "2026-03-10",
+  },
+  {
+    author: "Seaside06599966886",
+    rating: 5,
+    text:
+      "We booked a driver for our 10-day Sri Lanka round trip with 28holidays. From the very beginning, the initial coordination and detailed planning with Ella were professional and smooth. Faheem, our young driver, was punctual every single day and safely took us to all the places we wanted to visit. With additional support in the background from Paslim, we were able to enjoy an unforgettable journey. Thank you very much for everything!",
+    date: "2026-02-22",
   },
 ];
 
@@ -73,6 +89,37 @@ const ITINERARY_PREVIEW = [
   },
 ];
 
+function ReviewCard({ review }: { review: TripadvisorReview }) {
+  return (
+    <article className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-1 text-yellow-400">
+          {Array.from({ length: 5 }, (_, index) => (
+            <svg
+              key={index}
+              className={`w-5 h-5 ${index < Math.max(1, Math.min(5, Math.round(review.rating)))
+                ? "text-yellow-400"
+                : "text-gray-200"
+                }`}
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          ))}
+        </div>
+        <p className="text-xs font-semibold tracking-[0.18em] text-gray-400 uppercase">
+          {formatReviewDate(review.date)}
+        </p>
+      </div>
+      <blockquote className="text-gray-600 italic leading-7 mb-6">
+        &quot;{review.text}&quot;
+      </blockquote>
+      <p className="font-medium text-slate-900">- {review.author}</p>
+    </article>
+  );
+}
+
 function formatReviewDate(date: string) {
   if (!date) {
     return "TripAdvisor review";
@@ -94,12 +141,11 @@ function formatReviewDate(date: string) {
 export default function Home() {
   const quoteFormRef = useRef<HTMLFormElement>(null);
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
-  const [tripadvisorReviews, setTripadvisorReviews] = useState<TripadvisorReview[]>([]);
   const [quoteStatus, setQuoteStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [quoteMessage, setQuoteMessage] = useState("");
   const countryCodes = useCountryCodes();
   const activeHeroSlide = HERO_SLIDES[activeHeroIndex];
-  const testimonialReviews = tripadvisorReviews.length > 0 ? tripadvisorReviews : FALLBACK_TESTIMONIALS;
+  const [featuredTestimonial, ...remainingTestimonials] = TESTIMONIAL_REVIEWS;
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -108,34 +154,6 @@ export default function Home() {
 
     return () => {
       window.clearInterval(intervalId);
-    };
-  }, []);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    const loadTripadvisorReviews = async () => {
-      try {
-        const response = await fetch("/api/tripadvisor-reviews");
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as TripadvisorReview[];
-
-        if (!isCancelled && Array.isArray(data) && data.length > 0) {
-          setTripadvisorReviews(data.slice(0, 3));
-        }
-      } catch (error) {
-        console.error("Unable to load TripAdvisor reviews", error);
-      }
-    };
-
-    void loadTripadvisorReviews();
-
-    return () => {
-      isCancelled = true;
     };
   }, []);
 
@@ -497,36 +515,62 @@ export default function Home() {
           <h2 className="section-title">What Customers Say?</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {testimonialReviews.map((review) => (
-            <article
-              key={`${review.author}-${review.date || review.text.slice(0, 24)}`}
-              className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100"
-            >
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-1 text-yellow-400">
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <svg
-                      key={index}
-                      className={`w-5 h-5 ${index < Math.max(1, Math.min(5, Math.round(review.rating)))
-                        ? "text-yellow-400"
-                        : "text-gray-200"
-                        }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-xs font-semibold tracking-[0.18em] text-gray-400 uppercase">
-                  {formatReviewDate(review.date)}
-                </p>
+          {featuredTestimonial ? (
+            <ReviewCard
+              key={`${featuredTestimonial.author}-${featuredTestimonial.date || featuredTestimonial.text.slice(0, 24)}`}
+              review={featuredTestimonial}
+            />
+          ) : null}
+          <a
+            href={CUSTOMER_VIDEO_TESTIMONIAL.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open the customer video testimonial"
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src={CUSTOMER_VIDEO_TESTIMONIAL.thumbnailSrc}
+                alt={CUSTOMER_VIDEO_TESTIMONIAL.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+              <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-900">
+                Video Testimonial
               </div>
-              <blockquote className="text-gray-600 italic leading-7 mb-6">
-                &quot;{review.text}&quot;
-              </blockquote>
-              <p className="font-medium text-slate-900">- {review.author}</p>
-            </article>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg transition-transform duration-300 group-hover:scale-110">
+                  <svg className="h-7 w-7 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l7.13-4.73a1 1 0 000-1.66L9.54 5.98A1 1 0 008 6.82z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-1 flex-col p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+                Watch The Story
+              </p>
+              <h3 className="mb-3 text-xl font-lora font-semibold text-slate-900">
+                {CUSTOMER_VIDEO_TESTIMONIAL.title}
+              </h3>
+              <p className="mb-6 leading-7 text-gray-600">
+                {CUSTOMER_VIDEO_TESTIMONIAL.description}
+              </p>
+              <span className="mt-auto inline-flex items-center gap-2 font-medium text-[#0056D8]">
+                Open video
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M11.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L14.586 10H3a1 1 0 110-2h11.586l-3.293-3.293a1 1 0 010-1.414z" />
+                </svg>
+              </span>
+            </div>
+          </a>
+          {remainingTestimonials.map((review) => (
+            <ReviewCard
+              key={`${review.author}-${review.date || review.text.slice(0, 24)}`}
+              review={review}
+            />
           ))}
         </div>
         <div className="mt-6 flex items-center justify-center">
