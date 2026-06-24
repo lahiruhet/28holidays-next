@@ -6,7 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const siteName = "28Holidays";
-const siteUrl = "https://28holidays.com";
+const siteUrl = "https://www.28holidays.com";
+const googleTagId = "AW-800627138";
 const siteTitle =
   "Rent a Car with Driver in Sri Lanka | Colombo Chauffeur & Airport Transfer Service";
 const siteDescription =
@@ -83,9 +84,6 @@ export const metadata: Metadata = {
   publisher: siteName,
   category: "travel",
   referrer: "origin-when-cross-origin",
-  alternates: {
-    canonical: "/",
-  },
   robots: {
     index: true,
     follow: true,
@@ -121,8 +119,13 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon_io/site.webmanifest",
   icons: {
-    icon: [{ url: "/favicon.ico" }],
+    icon: [
+      { url: "/favicon_io/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon_io/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
     shortcut: ["/favicon.ico"],
+    apple: [{ url: "/favicon_io/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
@@ -137,6 +140,16 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-tag" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${googleTagId}');`}
+        </Script>
         <Script id="tawk-to-widget" strategy="afterInteractive">
           {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
