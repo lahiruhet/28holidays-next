@@ -136,20 +136,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${googleTagId}');`,
+          }}
+        />
+      </head>
       <body className={`${lora.variable} ${cabin.variable} antialiased font-cabin`}>
         <Header />
         {children}
         <Footer />
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-ads-tag" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${googleTagId}');`}
-        </Script>
         <Script id="tawk-to-widget" strategy="afterInteractive">
           {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
