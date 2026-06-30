@@ -265,7 +265,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .country-code-fallback {
   color: #475569;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -445,4 +445,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     grid-row: 5 / 6;
     min-height: 140px;
   }
+}
+
+@keyframes hero-image-fade {
+  from {
+    opacity: 0.92;
+    transform: scale(1.01);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-image {
+  animation: hero-image-fade 700ms ease-out;
 }

@@ -61,13 +61,13 @@ const siteKeywords = [
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 const cabin = Cabin({
   variable: "--font-cabin",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -136,22 +136,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${googleTagId}');`,
-          }}
-        />
-      </head>
       <body className={`${lora.variable} ${cabin.variable} antialiased font-cabin`}>
         <Header />
         {children}
         <Footer />
-        <Script id="tawk-to-widget" strategy="afterInteractive">
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
+          strategy="lazyOnload"
+        />
+        <Script id="google-ads-tag" strategy="lazyOnload">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${googleTagId}');`}
+        </Script>
+        <Script id="tawk-to-widget" strategy="lazyOnload">
           {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
